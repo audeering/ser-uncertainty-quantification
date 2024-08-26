@@ -1,0 +1,658 @@
+# @package _global_
+model:
+  architecture: w2v2
+  task: classification
+  prediction:
+    emotion:
+      - anger
+      - happiness
+      - neutral
+      - sadness
+  initial_model: 'facebook/wav2vec2-large-robust'
+  random_initialized_model: False
+  num_layers: 11 # if no number is given take the number of layers from the pre-trained model
+
+data:
+  data_source_unlabeled:
+  data_source_labeled_train:
+    - name: crema-d
+      version: 1.2.0
+      table: emotion.categories.train.gold_standard
+    - name: emodb
+      version: 1.3.0
+      table: emotion.categories.train.gold_standard
+    - name: msppodcast
+      version: 2.6.0
+      table: emotion.categories.train.gold_standard
+
+  data_source_labeled_dev:
+    - name: crema-d
+      version: 1.2.0
+      table: emotion.categories.dev.gold_standard
+    - name: msppodcast
+      version: 2.6.0
+      table: emotion.categories.dev.gold_standard
+
+  # column and intended labels, if no specific labels are needed just pass a empty list
+  important_columns_labels:
+    emotion:
+      - anger
+      - happiness
+      - neutral
+      - sadness
+
+  cache_path: '../../../cache_csv/emo_cat_paper2' # TODO create based on config
+
+testing:
+  tests:
+    crema_d_emo_cat:
+      type: categorical
+      data_source_labeled_test:
+        - name: crema-d
+          version: 1.2.0
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      cache_path: None
+    emodb_emo_cat:
+      type: categorical
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      cache_path: None
+    # msp1_emo_cat:
+    #   type: categorical
+    #   data_source_labeled_test:
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   cache_path: None
+    # msp2_emo_cat:
+    #   type: categorical
+    #   data_source_labeled_test:
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-2.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+      # cache_path: None
+
+    emodb_emo_noise_mc:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: white_noise
+      uncertainty_method: mc_dropout
+      cache_path: None
+    emodb_emo_noise_soft_mc:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: white_noise
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    emodb_emo_noise_soft_entropy:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: white_noise
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    # msp1_emo_noise_mc:
+    #   type: categorical_noise
+    #   data_source_labeled_test:
+    #       - name: msppodcast
+    #         version: 4.2.0
+    #         table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   noise: white_noise
+    #   uncertainty_method: mc_dropout
+    #   cache_path: None
+    # msp1_emo_noise_soft_mc:
+    #   type: categorical_noise
+    #   data_source_labeled_test:
+    #       - name: msppodcast
+    #         version: 4.2.0
+    #         table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   noise: white_noise
+    #   post_processing: softmax
+    #   uncertainty_method: mc_dropout
+    #   cache_path: None
+    # msp1_emo_noise_soft_entropy:
+    #   type: categorical_noise
+    #   data_source_labeled_test:
+    #       - name: msppodcast
+    #         version: 4.2.0
+    #         table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   noise: white_noise
+    #   post_processing: softmax
+    #   uncertainty_method: entropy
+    #   cache_path: None
+    crema_d_rater_agreement_soft_entropy:
+      type: agreement
+      data_source_labeled_test:
+        - name: crema-d
+          version: 1.2.0
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+        emotion.level:
+        emotion.agreement:
+      agreement_column: emotion.agreement
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None  
+    # crema_d_rater_agreement_mc:
+    #   type: agreement
+    #   data_source_labeled_test:
+    #     - name: crema-d
+    #       version: 1.2.0
+    #       table: emotion.categories.test.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #     emotion.level:
+    #     emotion.agreement:
+    #   agreement_column: emotion.agreement
+    #   uncertainty_method: mc_dropout
+    #   cache_path: None
+    crema_d_rater_agreement_soft_mc:
+      type: agreement
+      data_source_labeled_test:
+        - name: crema-d
+          version: 1.2.0
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+        emotion.level:
+        emotion.agreement:
+      agreement_column: emotion.agreement
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    emodb_rater_agreement_soft_entropy:
+      type: agreement
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+        emotion.confidence:
+      agreement_column: emotion.confidence
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None  
+    # msp1_rater_agreement_soft_entropy:
+    #   type: agreement
+    #   data_source_labeled_test:
+    #       - name: msppodcast
+    #         version: 4.2.0
+    #         table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #     emotion.agreement:
+    #   agreement_column: emotion.agreement
+    #   post_processing: softmax
+    #   uncertainty_method: entropy
+    #   cache_path: None
+    emodb_rater_agreement_soft_mc:
+      type: agreement
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+        emotion.confidence:
+      agreement_column: emotion.confidence
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None  
+    # msp1_rater_agreement_soft_mc:
+    #   type: agreement
+    #   data_source_labeled_test:
+    #       - name: msppodcast
+    #         version: 4.2.0
+    #         table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #     emotion.agreement:
+    #   agreement_column: emotion.agreement
+    #   post_processing: softmax
+    #   uncertainty_method: mc_dropout
+    #   cache_path: None  
+
+    cochlscene_ood_entropy_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: cochlscene
+          version: 1.0.0
+          table: test
+      important_columns_labels:
+        scene:
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    cochlscene_ood_mc_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: cochlscene
+          version: 1.0.0
+          table: test
+      important_columns_labels:
+        scene:
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    emodb_emo_added_files_entropy_softmax:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: added_files
+      added_db:
+        - name: cochlscene
+          version: 1.0.0
+          table: test
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    musan-speech_ood_entropy_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: speech
+      important_columns_labels:
+        gender:
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    musan-music_ood_entropy_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: music
+      important_columns_labels:
+        vocals:
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    musan-noise_ood_entropy_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: noise
+      important_columns_labels:
+        background_noise:
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+    musan-speech_ood_mc_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: speech
+      important_columns_labels:
+        gender:
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    musan-music_ood_mc_softmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: music
+      important_columns_labels:
+        vocals:
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    musan-noise_ood_mcsoftmax:
+      type: ood
+      data_source_labeled_test:
+        - name: musan
+          version: 1.0.0
+          table: noise
+      important_columns_labels:
+        background_noise:
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    
+    crema_d_uncertainty_correctness_entropy_softmax:
+      type: correctness
+      data_source_labeled_test:
+        - name: crema-d
+          version: 1.2.0
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+      per_class_evaluation: False
+    crema_d_uncertainty_correctness_mc_softmax:
+      type: correctness
+      data_source_labeled_test:
+        - name: crema-d
+          version: 1.2.0
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+      per_class_evaluation: False
+
+
+    ravdess_emo_noise_soft_mc:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: ravdess
+          version: 1.1.2
+          table: emotion.speech.test
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: white_noise
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+    ravdess_emo_noise_soft_entropy:
+      type: categorical_noise
+      data_source_labeled_test:
+        - name: ravdess
+          version: 1.1.2
+          table: emotion.speech.test
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      noise: white_noise
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+
+
+    emodb_uncertainty_correctness_entropy_softmax:
+      type: correctness
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      post_processing: softmax
+      uncertainty_method: entropy
+      cache_path: None
+      per_class_evaluation: False
+    # msp1_uncertainty_correctness_entropy_softmax:
+    #   type: correctness
+    #   data_source_labeled_test:
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   post_processing: softmax
+    #   uncertainty_method: entropy
+    #   cache_path: None
+    #   per_class_evaluation: False
+
+    emodb_uncertainty_correctness_mc_softmax:
+      type: correctness
+      data_source_labeled_test:
+        - name: emodb
+          version: 1.4.1
+          table: emotion.categories.test.gold_standard
+      important_columns_labels:
+        emotion:
+          - anger
+          - happiness
+          - neutral
+          - sadness
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      cache_path: None
+      per_class_evaluation: False
+    # msp1_uncertainty_correctness_mc_softmax:
+    #   type: correctness
+    #   data_source_labeled_test:
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   post_processing: softmax
+    #   uncertainty_method: mc_dropout
+    #   cache_path: None
+    #   per_class_evaluation: False
+
+    white-noise_ood_class_entropy_softmax:
+      type: ood
+      data_source_artificaial_test: white_noise
+      important_columns_labels:
+        gain:
+      post_processing: softmax
+      uncertainty_method: entropy
+      # plot_combined: False
+      cache_path: None
+    # emodb_ood_class_entropy_softmax:
+    #   type: ood
+    #   data_source_labeled_test:
+    #     - name: emodb
+    #       version: 1.4.1
+    #       table: emotion.categories.test.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #   post_processing: softmax
+    #   uncertainty_method: entropy
+    #   plot_combined: False
+    #   cache_path: None
+
+    white-noise_ood_class_mc_softmax:
+      type: ood
+      data_source_artificaial_test: white_noise
+      important_columns_labels:
+        gain:
+      post_processing: softmax
+      uncertainty_method: mc_dropout
+      # plot_combined: False
+      cache_path: None
+    # emodb_ood_class_mc_softmax:
+    #   type: ood
+    #   data_source_labeled_test:
+    #     - name: emodb
+    #       version: 1.4.1
+    #       table: emotion.categories.test.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #   post_processing: softmax
+    #   uncertainty_method: mc_dropout
+    #   plot_combined: False
+    #   cache_path: None
+
+    # all_uncertainty_correctness_entropy_softmax:
+    #   type: correctness
+    #   data_source_labeled_test:
+    #     - name: crema-d
+    #       version: 1.2.0
+    #       table: emotion.categories.test.gold_standard
+    #     - name: emodb
+    #       version: 1.4.1
+    #       table: emotion.categories.test.gold_standard
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   post_processing: softmax
+    #   uncertainty_method: entropy
+    #   plot_combined: False
+    #   cache_path: None
+    #   per_class_evaluation: False
+
+    # all_uncertainty_correctness_mc_softmax:
+    #   type: correctness
+    #   data_source_labeled_test:
+    #     - name: crema-d
+    #       version: 1.2.0
+    #       table: emotion.categories.test.gold_standard
+    #     - name: emodb
+    #       version: 1.4.1
+    #       table: emotion.categories.test.gold_standard
+    #     - name: msppodcast
+    #       version: 4.2.0
+    #       table: emotion.categories.test-1.gold_standard
+    #   important_columns_labels:
+    #     emotion:
+    #       - anger
+    #       - happiness
+    #       - neutral
+    #       - sadness
+    #   post_processing: softmax
+    #   uncertainty_method: mc_dropout
+    #   plot_combined: False
+    #   cache_path: None
+    #   per_class_evaluation: False
+
+  combined_df: 'combined'
+  cache_path: '../../../cache_csv/cat' # TODO create based on config
+
+# training:
+fp16: False
+per_device_train_batch_size: 16
+per_device_eval_batch_size: 16
+gradient_accumulation_steps: 2
+num_train_epochs: 8 # nuber of epochs for initial training with real labeled data
+num_train_epochs_iteratively: 1 # nuber of epochs for iterative training with real and pseudo labeled data
+# number of iterative rounds can be chosen with 'labeling_rounds'
+save_steps: 1000
+eval_steps: 1000
+logging_steps: 1000
+learning_rate: 1e-4
+warmup_steps: 1000
+metric_for_best_model:
+
+
+sampling_rate: 16_000
+max_duration_sec: 8.0
+min_duration_sec: 1.0
+
+cuda_id: 0
+device: 'cpu' # is updated by the code if cuda is available
+
+uncertainty_prediction:
+evaluation_method:
+
+model_root: '../../../model/cat' # TODO replace by id automatically created based on config
+results_root: '../../../results/cat' # TODO replace by id automatically created based on config
+
+hydra:
+  job:
+    chdir: True # create new directory for executing

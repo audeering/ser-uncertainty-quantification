@@ -1,0 +1,62 @@
+model:
+  architecture: w2v2
+  task: classification
+  prediction:
+    emotion:
+      - anger
+      - happiness
+      - neutral
+      - sadness
+  head: cat # only used for categorical training
+  initial_model: 'facebook/wav2vec2-large-robust'
+  random_initialized_model: False
+  num_layers: 1 # if no number is given take the number of layers from the pre-trained model
+
+data:
+  data_source_unlabeled:
+  data_source_labeled_train:
+  data_source_labeled_dev:
+  # column and intended labels, if no specific labels are needed just pass a empty list
+  important_columns_labels:
+  cache_path: '../../../cache_csv/emo_crema' # TODO create based on config
+  len_subset: # set to only load a subset of the databases
+
+testing:
+  tests:
+  combined_df: 'combined'
+  cache_path: '../../../cache_csv/tests' # TODO create based on config
+
+# training:
+loss: cross_entropy
+fp16: False
+per_device_train_batch_size: 16
+per_device_eval_batch_size: 16
+gradient_accumulation_steps: 2
+num_train_epochs: 10 # nuber of epochs for initial training with real labeled data
+
+# number of iterative rounds can be chosen with 'labeling_rounds'
+save_steps: 100
+eval_steps: 100
+logging_steps: 100
+learning_rate: 5e-5
+warmup_steps: 0
+metric_for_best_model:
+
+
+sampling_rate: 16_000
+max_duration_sec: 8.0
+min_duration_sec: 1.0
+
+cuda_id: 0
+device: 'cpu' # is updated by the code if cuda is available
+
+uncertainty_prediction:
+evaluation_method:
+
+model_root: '../../../model/test' # TODO replace by id automatically created based on config
+results_root: '../../../results/test' # TODO replace by id automatically created based on config
+
+
+hydra:
+  job:
+    chdir: True # create new directory for executing
