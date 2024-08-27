@@ -345,7 +345,7 @@ fp16: False
 per_device_train_batch_size: 16
 per_device_eval_batch_size: 16
 gradient_accumulation_steps: 2
-num_train_epochs: 15 # nuber of epochs for initial training with real labeled data
+num_train_epochs: 8 # nuber of epochs for initial training with real labeled data
 num_train_epochs_iteratively: 1 # nuber of epochs for iterative training with real and pseudo labeled data
 # number of iterative rounds can be chosen with 'labeling_rounds'
 save_steps: 1000
