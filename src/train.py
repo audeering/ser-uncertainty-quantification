@@ -11,7 +11,7 @@ import transformers
 from omegaconf import DictConfig
 import datasets
 
-from src.data.create_data_frames import load_training_data
+from data.create_data_frames import load_training_data
 from trainer import Trainer, EdlTrainer, KlTrainer
 from utils.loss_functions import WeightedEdlDigammaLoss, WeightedKlLoss
 

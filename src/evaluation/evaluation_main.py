@@ -6,10 +6,10 @@ import omegaconf
 import pandas as pd
 import seaborn as sns
 
-from src.data.create_data_frames import load_testing_data, load_dev_data
-from src.evaluation.plots import plot_uncertainty_bin_barplot
-from src.evaluation.prediction_functions import get_torch_dropout_predict_function, get_torch_predict_function
-from src.evaluation.tests import test_uncertainty_dropout, test_uncertainty, test_categorical, test_dimensional, \
+from data.create_data_frames import load_testing_data, load_dev_data
+from evaluation.plots import plot_uncertainty_bin_barplot
+from evaluation.prediction_functions import get_torch_dropout_predict_function, get_torch_predict_function
+from evaluation.tests import test_uncertainty_dropout, test_uncertainty, test_categorical, test_dimensional, \
     test_deviaion, test_categorical_noise, test_ood_data, test_uncertainty_calibration, calibrate_uncertainty
 
 

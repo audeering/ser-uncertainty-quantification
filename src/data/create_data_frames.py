@@ -4,9 +4,9 @@ import audeer
 import pandas as pd
 from omegaconf import DictConfig
 from pandas import DataFrame
-from src.data.create_artificial_data import create_white_noise_db
+from data.create_artificial_data import create_white_noise_db
 
-from src.data.create_data_sets import create_dataset
+from data.create_data_sets import create_dataset
 
 
 def load_training_data(cfg_data: DictConfig,

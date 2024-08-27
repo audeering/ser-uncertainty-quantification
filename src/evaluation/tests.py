@@ -14,7 +14,7 @@ from omegaconf import omegaconf, open_dict
 from scipy.stats import entropy
 import seaborn as sns
 
-from src.evaluation.edl_uncertainty import compute_df_edl_uncertainty
+from evaluation.edl_uncertainty import compute_df_edl_uncertainty
 
 
 def test_ood_data(df_true, prediction_classes, predict_func, test_cfg_name, test_cfg, cfg):
