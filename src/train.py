@@ -45,6 +45,12 @@ def train(model, cfg: DictConfig):
     print(df_train[column].value_counts())
 
     df_train['targets'] = df_train[column].map(label2id)
+
+    targets = pd.Series(df_train['targets'])
+    counts = targets.value_counts().sort_index()
+    train_weights = (1 / counts)
+    train_weights /= train_weights.sum()
+
     if cfg.loss == 'kl_loss':
         if 'data_source_labeled_train' in cfg.data_ood:
             df_train_ood, df_dev_ood = load_training_data(cfg.data_ood)
@@ -121,10 +127,7 @@ def train(model, cfg: DictConfig):
         scores = {name: metric(truth, preds) for name, metric in metrics.items()}
         return scores
 
-    targets = pd.Series(df_train['targets'])
-    counts = targets.value_counts().sort_index()
-    train_weights = (1 / counts)
-    train_weights /= train_weights.sum()
+
     if cfg.loss == 'cross_entropy':
         criterion = torch.nn.CrossEntropyLoss(weight=torch.Tensor(train_weights).to(cfg.device))
         specific_trainer = Trainer
