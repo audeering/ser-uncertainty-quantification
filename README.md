@@ -24,7 +24,8 @@ $ cd src
 $ python3 main.py +experiments=emo_cat_ce
 ```
 
-Note: We do not have the rights to redistribute the MSP Podcast data set ourselves,
+Note: We do not have the rights to redistribute the
+[MSP Podcast](https://ecs.utdallas.edu/research/researchlabs/msp-lab/MSP-Podcast.html) data set ourselves,
 therefore you must obtain it separately or exclude it from the training/test data.
 
 ## License
