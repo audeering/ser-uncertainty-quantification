@@ -79,6 +79,9 @@ def test_ood_data(df_true, prediction_classes, predict_func, test_cfg_name, test
         df_uncertain['post_processing'] = 'without'
 
     col_name = test_cfg.important_columns_labels
+    
+    print(df_uncertain)
+    print(df_uncertain.columns)
     df_uncertain[col_name] = df_true[col_name]
 
     if 'plot_combined' not in test_cfg or test_cfg.plot_combined:

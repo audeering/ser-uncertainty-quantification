@@ -35,6 +35,7 @@ def create_dataset(data_source: Union[tuple, List],
                 sampling_rate=16000,
                 media=files_to_load,
                 full_path=True,
+                num_workers=8,
             )[config['table']], False))
         elif 'condition' in config and config['condition']:
             db = audb.load(
